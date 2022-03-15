@@ -4,11 +4,21 @@ const InputDataDecoder = require('ethereum-input-data-decoder');
 const decoder = new InputDataDecoder('./abi.json');
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETHNODE_URL));
+const CoinGecko = require('coingecko-api');
 
-const usdRate=568/1800;
+exports.getLeadersBoard = async () => {
 
-exports.getLeadersBoard = async () =>
-     await db.raw(`
+     const CoinGeckoClient = new CoinGecko();
+     let usdRate;
+     try {
+          let res = await CoinGeckoClient.coins.fetch('marsdao', {});
+          usdRate = res.data.market_data.current_price.usd;
+     } catch (e) {
+          console.log('Failed to get currency rate')
+          usdRate = 0;
+     }
+
+     return db.raw(`
         select claim.address, claim.won, buy.tickets,  claim.won * ${usdRate} as won_usd 
         from (
             select sum(tokens_number) / 1000000000000000000 as won, address   from logs  group by "address" order by won desc
@@ -19,6 +29,8 @@ exports.getLeadersBoard = async () =>
         order by won desc
         limit 100 
     `)
+}
+
 
 exports.updateTransactions = async () => {
      const lastBlock = (await db('transactions').max('blockId'))[0]?.max;
