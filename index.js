@@ -22,19 +22,3 @@ cron.schedule('* * * * *', async () => {
     await updateTransactions();
     await parseLogs();
 });
-
-//
-// var subscription = web3.eth.subscribe('logs', {
-//     address: process.env.MARSDAO_SMARTCONTRACT,
-// }, function(error, result){
-//     if (!error)
-//         console.log(result);
-//     })
-//     .on("connected", function(subscriptionId){
-//         console.log('Subscription has been added: '.subscriptionId);
-//     })
-//     .on("data", function(log){
-//         console.log('data');
-//         console.log(log);
-//     });
-
