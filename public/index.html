@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container">
+        <div id="app"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script id="winnerlist-template" type="text/x-handlebars-template">
+        <h1>Leaderboard</h1>
+        <table class="table">
+            <tr>
+                <th>Address</th>
+                <th>Tickets</th>
+                <th>Won</th>
+                <th>Won USD</th>
+            </tr>
+            {{#each items}}
+                <tr>
+                    <td>{{address}}</td>
+                    <td>{{tickets}}</td>
+                    <td>{{won}}</td>
+                    <td>{{won_usd}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    </script>
+    <script>
+        const tableTemplate = Handlebars.compile($('#winnerlist-template').html());
+
+        $( async function (){
+            const app = $('#app');
+            await axios.get('/data').then((response) => app.html(tableTemplate({items: response.data.rows})))
+        })
+    </script>
+</body>
+</html>
